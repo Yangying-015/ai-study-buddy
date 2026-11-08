@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fffaf5">
+<title>AI Study Buddy｜智慧學習小幫手</title>
+<style>
+:root{--ink:#242424;--muted:#777;--line:#eee7df;--orange:#f39b52;--orange2:#fff0e2;--bg:#fffaf5;--white:#fff;--green:#16865b;--red:#c34b4b;--shadow:0 12px 35px rgba(61,42,20,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
+header{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(22px,calc((100vw - 1100px)/2));position:sticky;top:0;z-index:5}
+.brand{font-weight:800;font-size:18px;letter-spacing:-.4px}.brand span{color:var(--orange)}.status{font-size:12px;color:var(--muted);display:flex;gap:7px;align-items:center}.dot{width:8px;height:8px;background:#bbb;border-radius:50%}.dot.on{background:#27a56d}
+main{max-width:1100px;margin:34px auto;padding:0 22px 70px}.hero{padding:28px 0 25px}.eyebrow{color:#c97934;font-weight:700;font-size:12px;letter-spacing:1.5px}.hero h1{font-size:clamp(28px,5vw,42px);margin:10px 0 9px;letter-spacing:-1.3px}.hero p{color:var(--muted);margin:0;line-height:1.7}
+.layout{display:grid;grid-template-columns:230px 1fr;gap:22px}.sidebar,.panel,.stat{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.sidebar{padding:12px;height:max-content;position:sticky;top:88px}.nav{border:0;background:transparent;width:100%;text-align:left;padding:13px 14px;border-radius:11px;font-size:14px;color:#666;cursor:pointer;margin:2px 0}.nav.active,.nav:hover{background:var(--orange2);color:#8e4e18;font-weight:700}
+.content{min-width:0}.panel{padding:24px;margin-bottom:18px}.panel h2{font-size:20px;margin:0 0 7px}.sub{color:var(--muted);font-size:13px;line-height:1.65;margin:0 0 18px}
+label{display:block;font-size:13px;font-weight:700;margin:15px 0 8px}textarea,input,select{font:inherit;width:100%;border:1px solid #e6dfd8;border-radius:11px;padding:13px;background:#fff;color:var(--ink);outline:none}textarea:focus,input:focus,select:focus{border-color:var(--orange);box-shadow:0 0 0 3px #f39b5220}textarea{min-height:190px;resize:vertical;line-height:1.7}
+.row{display:flex;gap:12px;align-items:end}.row>*{flex:1}.btn{border:0;border-radius:11px;padding:12px 17px;background:var(--orange);color:#fff;font-weight:750;cursor:pointer;font-size:14px}.btn:hover{filter:brightness(.97)}.btn:disabled{opacity:.55;cursor:wait}.btn.secondary{background:#fff1e5;color:#98551e}.btn.ghost{background:#f6f4f1;color:#555}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.notice{background:#fff8ef;border:1px solid #f7dfc6;color:#875323;padding:12px 14px;border-radius:11px;font-size:12px;line-height:1.6;margin:14px 0}
+.result{border:1px solid var(--line);border-radius:12px;padding:17px;margin-top:16px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}.hidden{display:none!important}.loading{color:#a45d24;font-size:13px;margin-top:12px}.error{color:var(--red);font-size:13px;margin-top:12px}.success{color:var(--green);font-size:13px;margin-top:12px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat{padding:17px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:25px;margin-top:5px}
+.question{padding:17px 0;border-bottom:1px solid var(--line)}.question:last-child{border:0}.question h3{font-size:15px;line-height:1.6;margin:0 0 12px}.option{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin:7px 0;cursor:pointer;font-size:14px}.option input{width:auto;margin-top:3px}.option:has(input:checked){border-color:var(--orange);background:#fffaf5}
+.badge{display:inline-block;padding:4px 9px;background:#f6f3ef;border-radius:20px;font-size:11px;color:#777;margin-right:6px}
+footer{text-align:center;color:#aaa;font-size:11px;margin-top:30px}
+@media(max-width:760px){main{margin-top:18px;padding:0 14px 45px}.layout{grid-template-columns:1fr}.sidebar{position:static;display:flex;overflow:auto;gap:4px;padding:7px}.nav{white-space:nowrap;width:auto;padding:10px 12px}.panel{padding:18px}.cards{grid-template-columns:1fr 1fr}.row{flex-direction:column;align-items:stretch}.status{font-size:0}.status .dot{font-size:12px}}
+</style>
+</head>
+<body>
+<header><div class="brand">✦ AI <span>Study Buddy</span></div><div class="status"><i class="dot" id="apiDot"></i><span id="apiStatus">尚未連接 AI</span></div></header>
+<main>
+<section class="hero"><div class="eyebrow">YOUR PERSONAL AI STUDY PARTNER</div><h1>讓學習變得更有方向。</h1><p>貼上課程教材，讓 AI 幫你整理重點、生成測驗，並找出需要加強的地方。</p></section>
+<div class="layout">
+<nav class="sidebar">
+<button class="nav active" data-page="home">✦ 教材工作台</button>
+<button class="nav" data-page="summary">▤ 重點整理</button>
+<button class="nav" data-page="quiz">◎ AI 智慧測驗</button>
+<button class="nav" data-page="records">▥ 學習紀錄</button>
+<button class="nav" data-page="settings">⚙ 連線設定</button>
+</nav>
+<div class="content">
+<section id="page-home" class="page">
+<div class="panel"><h2>先放入你的教材</h2><p class="sub">可以貼上課堂筆記、講義文字或課本段落。內容越完整，AI 越能準確整理與出題。</p>
+<label for="material">課程教材</label><textarea id="material" placeholder="例如：請在這裡貼上管理學、經濟學或其他課程的教材內容……"></textarea>
+<div class="row"><div><label for="subject">課程名稱（選填）</label><input id="subject" placeholder="例如：生產管理"/></div><div><label for="level">學習程度</label><select id="level"><option>一般大學生</option><option>初學者</option><option>進階</option></select></div></div>
+<div class="notice">小提醒：請勿貼上個人隱私、帳號密碼或不適合分享的資料。此版本以文字教材為主。</div>
+<div class="actions"><button class="btn" id="summarizeBtn">AI 幫我整理重點</button><button class="btn secondary" id="makeQuizBtn">根據教材出題</button></div><div id="homeMsg"></div>
+</div>
+<div class="cards"><div class="stat"><small>已完成測驗</small><strong id="statTests">0</strong></div><div class="stat"><small>平均答題正確率</small><strong id="statAccuracy">—</strong></div><div class="stat"><small>累積答對題數</small><strong id="statCorrect">0</strong></div></div>
+</section>
+<section id="page-summary" class="page hidden"><div class="panel"><h2>AI 重點整理</h2><p class="sub">根據你提供的教材，整理成容易複習的重點。</p><div id="summaryOutput" class="result">尚未產生整理內容。請先在「教材工作台」輸入教材。</div><div class="actions"><button class="btn ghost" id="copySummary">複製整理結果</button></div></div></section>
+<section id="page-quiz" class="page hidden"><div class="panel"><h2>AI 智慧測驗</h2><p class="sub">由 AI 根據教材產生選擇題。作答完成後會自動計分，並請 AI 解釋錯題與提出建議。</p>
+<div class="row"><div><label for="count">題目數量</label><select id="count"><option value="5">5 題</option><option value="10" selected>10 題</option><option value="15">15 題</option></select></div><div><label for="difficulty">難度</label><select id="difficulty"><option>簡單</option><option selected>中等</option><option>困難</option></select></div></div>
+<div class="actions"><button class="btn" id="generateBtn">生成測驗</button></div><div id="quizMsg"></div><form id="quizForm" class="hidden"><div id="questions"></div><button class="btn" type="submit">交卷並查看分析</button></form><div id="gradeOutput"></div>
+</div></section>
+<section id="page-records" class="page hidden"><div class="panel"><h2>學習紀錄</h2><p class="sub">紀錄保存在目前使用的瀏覽器中，清除瀏覽器資料可能會讓紀錄消失。</p><div id="recordsList"></div><div class="actions"><button class="btn ghost" id="clearRecords">清除紀錄</button></div></div></section>
+<section id="page-settings" class="page hidden"><div class="panel"><h2>AI 連線設定</h2><p class="sub">輸入部署完成的 Cloudflare Worker 網址，讓網頁可以安全地呼叫 Gemini AI。</p><label for="apiUrl">Worker API 網址</label><input id="apiUrl" placeholder="https://你的專案名稱.你的帳號.workers.dev"/>
+<div class="notice">請勿把 Gemini API 金鑰貼在這個網頁。金鑰應設定在 Cloudflare Worker 的 Secret，名稱為 GEMINI_API_KEY。</div><div class="actions"><button class="btn" id="saveApi">儲存並測試連線</button></div><div id="settingsMsg"></div></div></section>
+</div></div><footer>AI Study Buddy · 將 AI 變成你的學習夥伴</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let quizData=[],lastSummary="";
+const savedUrl=localStorage.getItem("asb_worker_url")||"";
+$("apiUrl").value=savedUrl;
+function showPage(name){document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));$("page-"+name).classList.remove("hidden");document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.page===name));if(name==="records")renderRecords();}
+document.querySelectorAll(".nav").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+function material(){return $("material").value.trim()}
+function msg(id,text,type="loading"){const el=$(id);el.className=type;el.textContent=text}
+async function callAI(action,payload={}){
+ const url=localStorage.getItem("asb_worker_url")||$("apiUrl").value.trim();
+ if(!url)throw new Error("請先到「連線設定」填入 Cloudflare Worker 網址。");
+ const r=await fetch(url.replace(/\/$/,"")+"/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,...payload})});
+ let data;try{data=await r.json()}catch{throw new Error("伺服器回傳格式不正確，請確認 Worker 已成功部署。")}
+ if(!r.ok)throw new Error(data.error||"AI 請求失敗");
+ return data;
+}
+$("saveApi").onclick=async()=>{const url=$("apiUrl").value.trim();if(!/^https:\/\/.+/.test(url)){msg("settingsMsg","請輸入完整的 https:// Worker 網址。","error");return;}localStorage.setItem("asb_worker_url",url);msg("settingsMsg","正在測試連線……");try{await callAI("ping");$("apiDot").classList.add("on");$("apiStatus").textContent="AI 連線正常";msg("settingsMsg","連線成功！AI 已經可以使用。","success");}catch(e){$("apiDot").classList.remove("on");msg("settingsMsg",e.message,"error");}};
+$("summarizeBtn").onclick=async()=>{if(material().length<30){msg("homeMsg","請至少輸入 30 個字的教材內容。","error");return;}msg("homeMsg","AI 正在閱讀教材並整理重點……");$("summarizeBtn").disabled=true;try{const d=await callAI("summarize",{material:material(),subject:$("subject").value,level:$("level").value});lastSummary=d.text||"沒有收到整理結果";$("summaryOutput").textContent=lastSummary;showPage("summary");msg("homeMsg","重點整理完成！","success");}catch(e){msg("homeMsg",e.message,"error");}finally{$("summarizeBtn").disabled=false;}};
+$("copySummary").onclick=async()=>{try{await navigator.clipboard.writeText(lastSummary);alert("已複製整理結果");}catch{alert("複製失敗，請手動選取文字");}};
+async function generateQuiz(){if(material().length<30){msg("quizMsg","請先到教材工作台輸入至少 30 個字的教材。","error");return;}msg("quizMsg","AI 正在根據教材設計題目……");$("generateBtn").disabled=true;$("makeQuizBtn").disabled=true;try{const d=await callAI("quiz",{material:material(),subject:$("subject").value,count:Number($("count").value),difficulty:$("difficulty").value});if(!Array.isArray(d.questions)||!d.questions.length)throw new Error("AI 沒有產生有效題目，請再試一次。");quizData=d.questions;$("gradeOutput").innerHTML="";renderQuiz();showPage("quiz");msg("quizMsg",`已生成 ${quizData.length} 題，開始作答吧！`,"success");}catch(e){msg("quizMsg",e.message,"error");}finally{$("generateBtn").disabled=false;$("makeQuizBtn").disabled=false;}}
+$("generateBtn").onclick=generateQuiz;$("makeQuizBtn").onclick=generateQuiz;
+function renderQuiz(){$("questions").innerHTML="";quizData.forEach((q,i)=>{const wrap=document.createElement("div");wrap.className="question";const h=document.createElement("h3");h.textContent=`第 ${i+1} 題｜${q.question}`;wrap.append(h);(q.options||[]).forEach((opt,j)=>{const lab=document.createElement("label");lab.className="option";const radio=document.createElement("input");radio.type="radio";radio.name="q"+i;radio.value=j;radio.required=true;const span=document.createElement("span");span.textContent=String.fromCharCode(65+j)+". "+opt;lab.append(radio,span);wrap.append(lab);});$("questions").append(wrap);});$("quizForm").classList.remove("hidden");}
+$("quizForm").onsubmit=async e=>{e.preventDefault();const answers=quizData.map((q,i)=>Number(new FormData($("quizForm")).get("q"+i)));const correct=quizData.map((q,i)=>Number(q.answer)===answers[i]);const score=Math.round(correct.filter(Boolean).length/quizData.length*100);const review=quizData.map((q,i)=>({question:q.question,options:q.options,correctAnswer:Number(q.answer),userAnswer:answers[i],isCorrect:correct[i],explanation:q.explanation||""}));$("gradeOutput").textContent="正在請 AI 分析答題表現……";try{const d=await callAI("feedback",{subject:$("subject").value,review,score});const record={date:new Date().toLocaleString("zh-TW"),subject:$("subject").value||"未命名課程",score,total:quizData.length,correct:correct.filter(Boolean).length};const records=JSON.parse(localStorage.getItem("asb_records")||"[]");records.unshift(record);localStorage.setItem("asb_records",JSON.stringify(records.slice(0,50)));$("gradeOutput").innerHTML="";const box=document.createElement("div");box.className="result";const title=document.createElement("h3");title.textContent=`本次得分：${score} 分（${record.correct}/${record.total} 題答對）`;const detail=document.createElement("p");detail.textContent=d.text||"AI 暫時無法提供分析。";box.append(title,detail);$("gradeOutput").append(box);renderStats();}catch(err){$("gradeOutput").textContent="已完成計分，但 AI 分析失敗："+err.message;}}
+function renderStats(){const r=JSON.parse(localStorage.getItem("asb_records")||"[]");$("statTests").textContent=r.length;$("statCorrect").textContent=r.reduce((a,x)=>a+x.correct,0);$("statAccuracy").textContent=r.length?Math.round(r.reduce((a,x)=>a+x.score,0)/r.length)+"%":"—";}
+function renderRecords(){const r=JSON.parse(localStorage.getItem("asb_records")||"[]");$("recordsList").innerHTML="";if(!r.length){$("recordsList").textContent="目前還沒有測驗紀錄。";return;}r.forEach(x=>{const d=document.createElement("div");d.className="result";d.textContent=`${x.date}｜${x.subject}｜${x.score} 分｜答對 ${x.correct}/${x.total} 題`;$("recordsList").append(d);});}
+$("clearRecords").onclick=()=>{if(confirm("確定清除所有學習紀錄？")){localStorage.removeItem("asb_records");renderRecords();renderStats();}};
+renderStats();
+</script>
+</body></html>
